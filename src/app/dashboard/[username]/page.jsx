@@ -1014,7 +1014,6 @@ export default function DashboardPage() {
               </TabsContent>
 
               <TabsContent value="design" className="space-y-4">
-                {/* Design customization content - keeping it brief since it's very long */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1023,7 +1022,249 @@ export default function DashboardPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {/* Design controls - truncated for brevity */}
+                    {/* Preset Themes */}
+                    <div>
+                      <Tabs value={presetTab} onValueChange={setPresetTab}>
+                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                          <TabsTrigger value="customizable">Themes</TabsTrigger>
+                          <TabsTrigger value="buttons">Buttons & Fonts</TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="customizable">
+                          <div className="space-y-3">
+                            <Label className="text-base font-semibold">Curated Themes</Label>
+                            <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
+                              {CURATED_THEMES.map((preset) => (
+                                <button
+                                  key={preset.name}
+                                  onClick={() => applyPreset(preset)}
+                                  className="group relative p-3 border-2 rounded-xl hover:border-primary transition-all"
+                                  style={{
+                                    background: preset.wallpaper,
+                                  }}
+                                >
+                                  <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  <div className="relative space-y-2">
+                                    <div
+                                      className="h-6 rounded-lg mx-auto"
+                                      style={{
+                                        backgroundColor: preset.buttonColor,
+                                        width: '80%',
+                                      }}
+                                    />
+                                    <p className="text-xs font-medium text-center" style={{ color: preset.titleColor }}>
+                                      {preset.name}
+                                    </p>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </TabsContent>
+                        
+                        <TabsContent value="buttons">
+                          <div className="space-y-3">
+                            <Label className="text-base font-semibold">Button & Font Presets</Label>
+                            <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+                              {BUTTON_FONT_PRESETS.map((preset) => (
+                                <button
+                                  key={preset.name}
+                                  onClick={() => applyButtonFontPreset(preset)}
+                                  className="p-4 border-2 rounded-xl hover:border-primary transition-all text-left"
+                                >
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <div
+                                      className={`px-4 py-2 text-sm font-medium ${
+                                        preset.buttonStyle === 'pill' ? 'rounded-full' : 
+                                        preset.buttonStyle === 'square' ? 'rounded-none' : 'rounded-lg'
+                                      }`}
+                                      style={{
+                                        backgroundColor: preset.buttonColor,
+                                        color: preset.buttonTextColor,
+                                        border: preset.buttonBorder,
+                                        fontFamily: preset.titleFont,
+                                      }}
+                                    >
+                                      {preset.name}
+                                    </div>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">{preset.description}</p>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
+
+                    <div className="border-t pt-6">
+                      <Label className="text-base font-semibold mb-4 block">Custom Design</Label>
+                      
+                      {/* Background & Wallpaper */}
+                      <div className="space-y-4 mb-6">
+                        <div>
+                          <Label htmlFor="wallpaper">Background/Wallpaper</Label>
+                          <Input
+                            id="wallpaper"
+                            value={theme.wallpaper}
+                            onChange={(e) => setTheme({ ...theme, wallpaper: e.target.value })}
+                            placeholder="#ffffff or gradient"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Use color (#fff) or gradient (linear-gradient(...))
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Button Customization */}
+                      <div className="space-y-4 mb-6">
+                        <Label className="text-sm font-semibold">Button Style</Label>
+                        <div className="grid grid-cols-3 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setTheme({ ...theme, buttonStyle: "rounded" })}
+                            className={`p-3 border-2 rounded-lg text-center ${
+                              theme.buttonStyle === "rounded" ? "border-primary bg-primary/5" : "border-border"
+                            }`}
+                          >
+                            <div className="w-full h-8 bg-muted rounded-lg mb-1"></div>
+                            <span className="text-xs">Rounded</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setTheme({ ...theme, buttonStyle: "pill" })}
+                            className={`p-3 border-2 rounded-lg text-center ${
+                              theme.buttonStyle === "pill" ? "border-primary bg-primary/5" : "border-border"
+                            }`}
+                          >
+                            <div className="w-full h-8 bg-muted rounded-full mb-1"></div>
+                            <span className="text-xs">Pill</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setTheme({ ...theme, buttonStyle: "square" })}
+                            className={`p-3 border-2 rounded-lg text-center ${
+                              theme.buttonStyle === "square" ? "border-primary bg-primary/5" : "border-border"
+                            }`}
+                          >
+                            <div className="w-full h-8 bg-muted mb-1"></div>
+                            <span className="text-xs">Square</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                          <Label htmlFor="buttonColor">Button Color</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id="buttonColor"
+                              type="color"
+                              value={theme.buttonColor}
+                              onChange={(e) => setTheme({ ...theme, buttonColor: e.target.value })}
+                              className="w-16 h-10 cursor-pointer"
+                            />
+                            <Input
+                              value={theme.buttonColor}
+                              onChange={(e) => setTheme({ ...theme, buttonColor: e.target.value })}
+                              placeholder="#000000"
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="buttonTextColor">Button Text</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id="buttonTextColor"
+                              type="color"
+                              value={theme.buttonTextColor}
+                              onChange={(e) => setTheme({ ...theme, buttonTextColor: e.target.value })}
+                              className="w-16 h-10 cursor-pointer"
+                            />
+                            <Input
+                              value={theme.buttonTextColor}
+                              onChange={(e) => setTheme({ ...theme, buttonTextColor: e.target.value })}
+                              placeholder="#ffffff"
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Title/Font Customization */}
+                      <div className="space-y-4 mb-6">
+                        <div>
+                          <Label htmlFor="titleFont">Title Font</Label>
+                          <Select
+                            value={theme.titleFont}
+                            onValueChange={(value) => setTheme({ ...theme, titleFont: value })}
+                          >
+                            <SelectTrigger id="titleFont">
+                              <SelectValue placeholder="Select font" />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-64">
+                              {FONT_OPTIONS.map((font) => (
+                                <SelectItem key={font.value} value={font.value}>
+                                  <span style={{ fontFamily: font.value }}>{font.label}</span>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="titleColor">Title Color</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id="titleColor"
+                              type="color"
+                              value={theme.titleColor}
+                              onChange={(e) => setTheme({ ...theme, titleColor: e.target.value })}
+                              className="w-16 h-10 cursor-pointer"
+                            />
+                            <Input
+                              value={theme.titleColor}
+                              onChange={(e) => setTheme({ ...theme, titleColor: e.target.value })}
+                              placeholder="#000000"
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Profile Image Layout */}
+                      <div className="space-y-4 mb-6">
+                        <Label className="text-sm font-semibold">Profile Image Layout</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setTheme({ ...theme, profileImageLayout: "classic" })}
+                            className={`p-3 border-2 rounded-lg text-center ${
+                              theme.profileImageLayout === "classic" ? "border-primary bg-primary/5" : "border-border"
+                            }`}
+                          >
+                            <div className="flex justify-center mb-2">
+                              <div className="w-12 h-12 bg-muted rounded-full"></div>
+                            </div>
+                            <span className="text-xs">Classic</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setTheme({ ...theme, profileImageLayout: "modern" })}
+                            className={`p-3 border-2 rounded-lg text-center ${
+                              theme.profileImageLayout === "modern" ? "border-primary bg-primary/5" : "border-border"
+                            }`}
+                          >
+                            <div className="flex justify-center mb-2">
+                              <div className="w-12 h-12 bg-muted rounded-lg"></div>
+                            </div>
+                            <span className="text-xs">Modern</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
                     <Button onClick={handleUpdateTheme} className="w-full" disabled={saving}>
                       {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                       Save Design
